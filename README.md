@@ -38,7 +38,6 @@ helm install \
     --set reporter.env.REP_SMTP_SSL='True' \
     --set reporter.env.REP_RECIPIENTS='jon-doe@example.org' \
     --set reporter.env.REP_FROM='jane-doe@example.org' \
-    # REP_TIMEWINDOW should correspond to scheduled period
     --set reporter.env.REP_TIMEWINDOW='1d' \
     --set reporter.schedule="0 7 * * *" \
     helm/
