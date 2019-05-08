@@ -11,12 +11,14 @@ EXECUTABLES = minikube docker helm
 K := $(foreach exec,$(EXECUTABLES),\
         $(if $(shell which $(exec)),some string,$(error "No $(exec) in PATH")))
 
-
 all: deploy_images print_services open_dashboard
 
 start_minikube:
 	@minikube status -p ${MINIKUBE_PROFILE} || \
 		minikube start -p ${MINIKUBE_PROFILE} --cpus 4 --memory 4096
+
+stop_minikube:
+	@minikube stop -p ${MINIKUBE_PROFILE}
 
 init_helm: start_minikube
 	@helm version || \

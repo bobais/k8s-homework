@@ -21,6 +21,7 @@ reporter:
     REP_FROM: 'jane-doe@example.org'
     # REP_TIMEWINDOW and schedule must correspond to each other
     REP_TIMEWINDOW: '1d'
+  # REP_TIMEWINDOW and schedule must correspond to each other
   schedule: "0 7 * * *"
 
 prometheus:
