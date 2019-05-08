@@ -1,0 +1,46 @@
+{{/*
+   Workaround https://stackoverflow.com/a/54181236
+*/}}
+{{- $dot := . }}
+
+apiVersion: batch/v1beta1
+kind: CronJob
+
+metadata:
+  name: {{ template "reporter.name" . }}
+  labels:
+    {{- include "eventstats.reporter.labels" . | nindent 4 }}
+
+spec:
+  schedule: {{ .Values.reporter.schedule }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: {{ template "reporter.name" . }}
+              image: {{ .Values.reporter.image }}
+              imagePullPolicy: {{ .Values.reporter.imagePullPolicy }}
+              env:
+                {{- range $key, $val := .Values.reporter.env }}
+                - name: {{ $key }}
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ include "reporter.name" $dot }}
+                      key: {{ $key }}
+                {{- end }}
+                - name: PROMETHEUS_URL
+                  value: {{ include "prometheus.url" . | quote }}
+                - name: REP_SMTP_USER_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "reporter.name" . }}
+                      key: REP_SMTP_USER_PASSWORD
+              resources:
+                limits:
+                  cpu: 200m
+                  memory: 200Mi
+                requests:
+                  cpu: 50m
+                  memory: 100Mi
+          restartPolicy: OnFailure

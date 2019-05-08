@@ -1,0 +1,32 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+
+metadata:
+  name: {{ template "watcher.name" . }}
+  labels:
+    {{- include "eventstats.watcher.labels" . | nindent 4 }}
+
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        {{- include "eventstats.watcher.labels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ template "watcher.name" . }}
+      containers:
+        - name: {{ template "watcher.name" . }}
+          image: {{ .Values.watcher.image }}
+          imagePullPolicy: {{ .Values.watcher.imagePullPolicy }}
+          ports:
+            - containerPort: 10080
+          env:
+            - name: "DEBUG"
+              value: {{ .Values.watcher.debug | quote }}
+          resources:
+            limits:
+              cpu: 200m
+              memory: 200Mi
+            requests:
+              cpu: 50m
+              memory: 50Mi

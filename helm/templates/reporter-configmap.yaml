@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: {{ template "reporter.name" . }}
+  labels:
+    {{- include "eventstats.reporter.labels" . | nindent 4 }}
+
+data:
+  {{- range $key, $val := .Values.reporter.env }}
+  {{ $key }}: {{ $val | quote }}
+  {{- end }}
+  PROMETHEUS_URL: {{ include "prometheus.url" . | quote }}

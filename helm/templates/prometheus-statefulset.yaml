@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: {{ template "prometheus.name" . }}
+
+spec:
+  serviceName: {{ template "prometheus.name" . }}
+  replicas: {{ .Values.prometheus.replicas }}
+  selector:
+    matchLabels:
+      {{- include "eventstats.prometheus.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "eventstats.prometheus.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ template "prometheus.name" . }}
+          image: {{ .Values.prometheus.image }}
+          args:
+            - "--config.file=/etc/prometheus/prometheus.yml"
+            - "--storage.tsdb.path=/prometheus/"
+          ports:
+            - containerPort: 9090
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: 9090
+            initialDelaySeconds: 30
+            timeoutSeconds: 30
+          livenessProbe:
+            httpGet:
+              path: /-/healthy
+              port: 9090
+            initialDelaySeconds: 30
+            timeoutSeconds: 30
+          resources:
+            limits:
+              cpu: 200m
+              memory: 2500Mi
+            requests:
+              cpu: 50m
+              memory: 100Mi
+          volumeMounts:
+            - name: prometheus-config-volume
+              mountPath: /etc/prometheus/
+            - name: prometheus-storage-volume
+              mountPath: /prometheus/
+
+      volumes:
+        - name: prometheus-config-volume
+          configMap:
+            defaultMode: 420
+            name: {{ template "prometheus.name" . }}
+        - name: prometheus-storage-volume
+          emptyDir: {}
+
+  volumeClaimTemplates:
+    - metadata:
+        name: prometheus-storage-volume
+      spec:
+        storageClassName: {{ .Values.prometheus.storageClassName }}
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ .Values.prometheus.storageQuota }}

@@ -1,0 +1,31 @@
+watcher:
+  image: bobais/eventstats-watcher:latest
+  imagePullPolicy: Always
+  deployment:
+    replicaCount: 1
+  endpoint: eventstats-watcher
+  debug: false
+
+
+reporter:
+  image: bobais/eventstats-reporter:latest
+  imagePullPolicy: Always
+  envsec:
+    REP_SMTP_USER_PASSWORD: 'fixme'
+  env:
+    REP_SMTP_HOST: 'smtp.example.org'
+    REP_SMTP_HOST_PORT: '465'
+    REP_SMTP_USER: 'jon-doe'
+    REP_SMTP_SSL: 'True'
+    REP_RECIPIENTS: 'jon-doe@example.org'
+    REP_FROM: 'jane-doe@example.org'
+    # REP_TIMEWINDOW and schedule must correspond to each other
+    REP_TIMEWINDOW: '1d'
+  schedule: "0 7 * * *"
+
+prometheus:
+  image: prom/prometheus:v2.9.2
+  replicas: 1
+  storageClassName: standard
+  storageQuota: 2Gi
+  #nodePort: 31000

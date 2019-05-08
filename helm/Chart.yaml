@@ -1,0 +1,9 @@
+name: eventstats
+description: Homework watching events in kubernetes cluster and generating report
+version: 0.0.1
+sources:
+  - https://hub.docker.com/r/bobais/eventstats-watcher
+  - https://hub.docker.com/r/bobais/eventstats-reporter
+maintainers:
+  - name: bobais
+    email: flybobik+helm@gmail.com

@@ -1,0 +1,4 @@
+.idea
+Dockerfile*
+Makefile
+eventstats-watcher

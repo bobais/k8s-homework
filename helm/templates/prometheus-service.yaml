@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: {{ template "prometheus.name" . }}
+  labels:
+    {{- include "eventstats.prometheus.labels" . | nindent 4 }}
+
+spec:
+  selector:
+    {{- include "eventstats.prometheus.labels" . | nindent 4 }}
+  {{- if .Values.prometheus.nodePort }}
+  type: NodePort
+  {{- end }}
+  ports:
+    - port: 80
+      targetPort: 9090
+      {{- if .Values.prometheus.nodePort }}
+      nodePort: {{ .Values.prometheus.nodePort }}
+      {{- end }}
