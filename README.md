@@ -49,11 +49,34 @@ helm install \
 
 *REP_TIMEWINDOW* defines timeframe of interest from NOW()-REP_TIMEWINDOW to NOW(). *schedule* defines the frequency (Cron Job) when reporter will generate and send the report.
 
+### Develop ###
+
+Run in repository root directory
+
+```bash
+cd ./eventstats/reporter
+python -m venv venv
+source ./venv/bin/activate
+pip install -r requirements.txt
+# No open reporter in your favorite IDE (dont forget to setup virtual env.)
+```
+
 ## Watcher notes ##
 
 * Written in Go but without proper public repo.
 * Dependencies not managed via tool.
-* Not 100% accurate.
+* Not 100% accurate when errors ocurres.
+
+### Develop without existing github repository ###
+
+Run in repository root directory
+
+```bash
+mkdir -p ${GOPATH}/src/github.com/bobais
+ln -sf ${PWD}/eventstats/watcher ${GOPATH}/src/github.com/bobais/eventstats-watcher
+go get -d github.com/bobais/eventstats-watcher
+# Now open eventstats-watcher with your favorite IDE :)
+```
 
 ## Sources ##
 
