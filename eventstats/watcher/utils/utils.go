@@ -63,6 +63,7 @@ func PrintfIfDebug(debug bool, format string, v ...interface{}) {
 func IsPositiveStatement(response string) bool {
 	switch strings.ToLower(response) {
 	case
+		"t",
 		"true",
 		"yes",
 		"1",
